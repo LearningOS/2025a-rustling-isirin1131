@@ -42,6 +42,9 @@ impl<T> LinkedList<T> {
             end: None,
         }
     }
+}
+
+impl<T: std::cmp::PartialOrd + Clone> LinkedList<T> {
 
     pub fn add(&mut self, obj: T) {
         let mut node = Box::new(Node::new(obj));
@@ -68,25 +71,45 @@ impl<T> LinkedList<T> {
             },
         }
     }
+
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
-        if list_a.length != 0 && list_b.length != 0 {
-            return Self {
-                length: list_a.length + list_b.length,
-                start: list_a.start,
-                end: list_b.end,
-            };
+        let mut merged_list = LinkedList::new();
+        
+        let mut current_a = list_a.start;
+        let mut current_b = list_b.start;
+        
+        while let (Some(node_a), Some(node_b)) = (current_a, current_b) {
+            unsafe {
+                let val_a = &(*node_a.as_ptr()).val;
+                let val_b = &(*node_b.as_ptr()).val;
+                
+                if val_a <= val_b {
+                    merged_list.add((*node_a.as_ptr()).val.clone());
+                    current_a = (*node_a.as_ptr()).next;
+                } else {
+                    merged_list.add((*node_b.as_ptr()).val.clone());
+                    current_b = (*node_b.as_ptr()).next;
+                }
+            }
         }
-		//TODO
-        if list_a.length == 0 {return list_b;}
-        if list_b.length == 0 {return list_a;}
-
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        
+        while let Some(node) = current_a {
+            unsafe {
+                merged_list.add((*node.as_ptr()).val.clone());
+                current_a = (*node.as_ptr()).next;
+            }
         }
-	}
+        
+        while let Some(node) = current_b {
+            unsafe {
+                merged_list.add((*node.as_ptr()).val.clone());
+                current_b = (*node.as_ptr()).next;
+            }
+        }
+        
+        merged_list
+    }
 }
 
 impl<T> Display for LinkedList<T>
