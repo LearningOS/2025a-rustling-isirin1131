@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -71,7 +70,17 @@ impl<T> LinkedList<T> {
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
+        if list_a.length != 0 && list_b.length != 0 {
+            return Self {
+                length: list_a.length + list_b.length,
+                start: list_a.start,
+                end: list_b.end,
+            };
+        }
 		//TODO
+        if list_a.length == 0 {return list_b;}
+        if list_b.length == 0 {return list_a;}
+
 		Self {
             length: 0,
             start: None,
